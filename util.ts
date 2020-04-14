@@ -88,20 +88,26 @@ const replaceUrl = (articlePath: string, uploadConfig: UploadConfig) => {
 			const result = patt.exec(data);
 
 			if (result == null ) {
+
+				return;
+			}
+			if(result[1].indexOf("http")!==0){
 				// 替换本地图片
 				replaceLocalUrl(data, (result) => {
 					upload(articlePath, data, result, uploadConfig);
 				});
-				return;
+			}else{
+				// 替换网络图片
+				const filename = result[1].substring(result[1].lastIndexOf("/") + 1);
+				request(result[1]).pipe(fs.createWriteStream(filename)).on('error',function(){
+					console.log("下载失败",result[1])
+					fs.unlink(filename, () => {});
+				}).on('close',function () {
+					upload(articlePath, data, result, uploadConfig, true);
+				})
 			}
-			// 检查是否为网络图片，如果是，就开始下载，然后上传
-			const filename = result[1].substring(result[1].lastIndexOf("/") + 1);
-			request(result[1]).pipe(fs.createWriteStream(filename)).on('error',function(){
-				console.log("下载失败",result[1])
-				fs.unlink(filename, () => {});
-			}).on('close',function () {
-				upload(articlePath, data, result, uploadConfig, true);
-			})
+
+
 		}else{
 			// 替换本地图片
 			replaceLocalUrl(data, (result) => {
