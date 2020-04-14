@@ -170,8 +170,9 @@ const upload = (
 	}
 	const formUploader = new qiniu.form_up.FormUploader(config);
 	const putExtra = new qiniu.form_up.PutExtra();
-	const temp = filePath.split('/')
-	const key = temp[temp.length - 1]
+	const temp = filePath.replace(/\\/g,'/').split('/')
+	let key = temp[temp.length - 1]
+	key = key.replace(/\s/g,'')
 	// 文件上传
 	formUploader.putFile(uploadToken, key,filePath, putExtra, function (
 		respErr,

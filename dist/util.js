@@ -144,8 +144,9 @@ var upload = function (articlePath, article, reResult, uploadConfig, networkImag
     }
     var formUploader = new qiniu.form_up.FormUploader(config);
     var putExtra = new qiniu.form_up.PutExtra();
-    var temp = filePath.split('/');
+    var temp = filePath.replace(/\\/g, '/').split('/');
     var key = temp[temp.length - 1];
+    key = key.replace(/\s/g, '');
     // 文件上传
     formUploader.putFile(uploadToken, key, filePath, putExtra, function (respErr, respBody, respInfo) {
         if (respErr) {
