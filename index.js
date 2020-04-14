@@ -30,6 +30,7 @@ hexo.extend.console.register(
 
 				fileDisplay("./source", replaceUrl, uploadConfig);
 
+
 			}
 		}
 	}

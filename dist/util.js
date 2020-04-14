@@ -77,11 +77,12 @@ var replaceUrl = function (articlePath, uploadConfig) {
                 return;
             }
             // 检查是否为网络图片，如果是，就开始下载，然后上传
-            var filename = result_1[1].substring(result_1[1].lastIndexOf("/") + 1);
-            request(result_1[1]).pipe(fs.createWriteStream(filename)).on('close', function () {
-                upload(articlePath, data, result_1, uploadConfig, true);
-            }).on('error', function () {
+            var filename_1 = result_1[1].substring(result_1[1].lastIndexOf("/") + 1);
+            request(result_1[1]).pipe(fs.createWriteStream(filename_1)).on('error', function () {
                 console.log("下载失败", result_1[1]);
+                fs.unlink(filename_1, function () { });
+            }).on('close', function () {
+                upload(articlePath, data, result_1, uploadConfig, true);
             });
         }
         else {

@@ -96,11 +96,12 @@ const replaceUrl = (articlePath: string, uploadConfig: UploadConfig) => {
 			}
 			// 检查是否为网络图片，如果是，就开始下载，然后上传
 			const filename = result[1].substring(result[1].lastIndexOf("/") + 1);
-			request(result[1]).pipe(fs.createWriteStream(filename)).on('close',function () {
-					upload(articlePath, data, result, uploadConfig, true);
-				}).on('error',function(){
-					console.log("下载失败",result[1])
-				})
+			request(result[1]).pipe(fs.createWriteStream(filename)).on('error',function(){
+				console.log("下载失败",result[1])
+				fs.unlink(filename, () => {});
+			}).on('close',function () {
+				upload(articlePath, data, result, uploadConfig, true);
+			})
 		}else{
 			// 替换本地图片
 			replaceLocalUrl(data, (result) => {
